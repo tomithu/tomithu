@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proceso de Reordenamiento Profesional · Tomás Ithuralde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --white:       #FFFFFF;
+  --bg:          #F6F9FC;
+  --bg-card:     #FFFFFF;
+  --navy:        #0B1F3A;
+  --navy-mid:    #1A3A5C;
+  --navy-light:  #2E5F8A;
+  --blue-muted:  #E6EEF7;
+  --orange:      #E85D1A;
+  --orange-soft: #FFF0E8;
+  --orange-dim:  rgba(232,93,26,0.13);
+  --text:        #0B1F3A;
+  --text-mid:    #3A5672;
+  --text-muted:  #7A9BB8;
+  --border:      #D6E4EF;
+  --ff-display:  'Epilogue', system-ui, sans-serif;
+  --ff-body:     'DM Sans', system-ui, sans-serif;
+  --r:           12px;
+  --rl:          20px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--ff-body);
+  font-weight: 400;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+::selection { background: var(--orange-dim); color: var(--orange); }
+
+.wrap  { max-width: 1120px; margin: 0 auto; padding: 0 clamp(1.25rem,5vw,3.5rem); }
+.wrapsm{ max-width: 760px;  margin: 0 auto; padding: 0 clamp(1.25rem,5vw,3.5rem); }
+section { padding: clamp(4rem,8vw,7rem) 0; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  font-family: var(--ff-display); font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--orange); background: var(--orange-soft);
+  border: 1px solid rgba(232,93,26,0.22);
+  padding: 0.32rem 0.85rem; border-radius: 999px; margin-bottom: 1.4rem;
+}
+.chip::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--orange); flex-shrink:0; }
+
+h1 { font-family:var(--ff-display); font-size:clamp(2.8rem,6.5vw,5.5rem); font-weight:800; line-height:1.0; letter-spacing:-0.03em; color:var(--text); }
+h2 { font-family:var(--ff-display); font-size:clamp(2rem,4.5vw,3.5rem); font-weight:700; line-height:1.05; letter-spacing:-0.025em; color:var(--text); }
+h3 { font-family:var(--ff-display); font-size:clamp(1.05rem,2vw,1.3rem); font-weight:600; line-height:1.2; color:var(--text); }
+p  { font-size:clamp(0.93rem,1.5vw,1.03rem); line-height:1.75; color:var(--text-mid); }
+
+.o  { color:var(--orange); }
+.wh { color:#fff !important; }
+.wm { color:rgba(255,255,255,.7) !important; }
+
+/* BUTTONS */
+.btn { display:inline-flex; align-items:center; gap:.5rem; font-family:var(--ff-display); font-size:.83rem; font-weight:700; letter-spacing:.04em; text-decoration:none; cursor:pointer; border:none; transition:all .2s; border-radius:8px; padding:.9rem 1.75rem; }
+.btn-p { background:var(--orange); color:#fff; }
+.btn-p:hover { background:#C94D0E; transform:translateY(-1px); box-shadow:0 8px 24px rgba(232,93,26,.3); }
+.btn-g { background:transparent; color:var(--text); border:1px solid var(--border); }
+.btn-g:hover { background:#fff; border-color:var(--navy-light); }
+.btn-w { background:#fff; color:var(--orange); }
+.btn-w:hover { background:var(--orange-soft); transform:translateY(-1px); }
+.btn-ow { background:transparent; color:#fff; border:1px solid rgba(255,255,255,.3); }
+.btn-ow:hover { background:rgba(255,255,255,.08); border-color:rgba(255,255,255,.6); }
+.arr { display:inline-block; width:16px; height:16px; flex-shrink:0; transition:transform .2s; mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'%3E%3C/line%3E%3Cpolyline points='12 5 19 12 12 19'%3E%3C/polyline%3E%3C/svg%3E"); mask-repeat:no-repeat; mask-size:contain; background:currentColor; }
+.btn:hover .arr { transform:translateX(3px); }
+
+/* ANIM */
+.fi { opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease; }
+.fi.v { opacity:1; transform:none; }
+.fi.d1{transition-delay:.1s}.fi.d2{transition-delay:.2s}.fi.d3{transition-delay:.3s}.fi.d4{transition-delay:.4s}
+
+/* ── NAV ── */
+nav { position:fixed; top:0; left:0; right:0; z-index:100; padding:1rem clamp(1.25rem,5vw,3.5rem); display:flex; align-items:center; justify-content:space-between; transition:background .3s,box-shadow .3s; }
+nav.sc { background:rgba(246,249,252,.93); backdrop-filter:blur(12px); box-shadow:0 1px 0 var(--border); }
+.nlogo { font-family:var(--ff-display); font-weight:800; font-size:.93rem; color:var(--text); text-decoration:none; letter-spacing:-.01em; }
+.nlogo span { color:var(--orange); }
+
+/* ── HERO ── */
+#hero { min-height:100svh; display:flex; flex-direction:column; justify-content:center; padding-top:5.5rem; padding-bottom:4rem; position:relative; overflow:hidden; }
+#hero::before { content:''; position:absolute; inset:0; background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px); background-size:48px 48px; opacity:.5; pointer-events:none; }
+#hero::after { content:''; position:absolute; top:-20%; right:-10%; width:60%; height:80%; background:radial-gradient(ellipse,rgba(232,93,26,.11) 0%,transparent 65%); pointer-events:none; }
+
+.h-inner { display:grid; grid-template-columns:1fr auto; gap:3rem; align-items:center; position:relative; z-index:1; }
+.h-h1 { margin-bottom:1.5rem; }
+.h-h1 .l2 { color:var(--orange); display:block; }
+.h-h1 .l3 { color:var(--navy-light); display:block; font-weight:400; }
+.h-sub { max-width:555px; margin-bottom:2.5rem; font-size:clamp(1rem,1.8vw,1.13rem); }
+.h-ctas { display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+.h-stats { display:flex; gap:2.5rem; margin-top:3.5rem; padding-top:2rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+.stat .n { font-family:var(--ff-display); font-size:2rem; font-weight:800; color:var(--text); line-height:1; letter-spacing:-.03em; }
+.stat .n span { color:var(--orange); }
+.stat small { display:block; font-size:.78rem; color:var(--text-muted); margin-top:.2rem; }
+
+.h-card { background:#fff; border:1px solid var(--border); border-radius:var(--rl); padding:1.75rem; width:235px; box-shadow:0 4px 28px rgba(11,31,58,.06); display:flex; flex-direction:column; gap:0; }
+.h-step { padding:1.25rem 0; border-bottom:1px solid var(--border); display:flex; align-items:flex-start; gap:.75rem; }
+.h-step:last-child { border-bottom:none; padding-bottom:0; }
+.h-step:first-child { padding-top:0; }
+.sdot { width:28px; height:28px; border-radius:8px; background:var(--orange-dim); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:.1rem; }
+.sdot span { font-family:var(--ff-display); font-size:.68rem; font-weight:700; color:var(--orange); }
+.h-step p { font-size:.83rem; line-height:1.45; color:var(--text-mid); margin:0; }
+
+/* ── RECONOCIMIENTO ── */
+#reco { background:var(--navy); padding:clamp(3.5rem,7vw,5.5rem) 0; }
+#reco h2 { color:#fff; }
+#reco h2 em { color:var(--orange); font-style:normal; }
+.rg { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.06); border-radius:var(--r); overflow:hidden; margin-top:2.5rem; }
+.ri { background:rgba(255,255,255,.02); padding:1.75rem; display:flex; gap:.9rem; align-items:flex-start; transition:background .2s; }
+.ri:hover { background:rgba(255,255,255,.05); }
+.ri-ico { width:32px; height:32px; border-radius:8px; background:var(--orange-dim); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:.1rem; }
+.ri-ico svg { width:14px; height:14px; stroke:var(--orange); fill:none; stroke-width:2; stroke-linecap:round; }
+.ri p { font-size:.88rem; color:rgba(255,255,255,.65); line-height:1.55; margin:0; }
+
+/* ── PROBLEMA ── */
+#problema { background:#fff; }
+.pl { display:grid; grid-template-columns:1fr 1fr; gap:clamp(3rem,6vw,6rem); align-items:start; }
+.cq { background:var(--navy); border-radius:var(--rl); padding:2.5rem; margin-bottom:2rem; position:relative; overflow:hidden; }
+.cq::before { content:'"'; position:absolute; top:-1rem; left:1.5rem; font-family:var(--ff-display); font-size:8rem; font-weight:800; color:rgba(255,255,255,.04); line-height:1; pointer-events:none; }
+.cq blockquote { font-family:var(--ff-display); font-size:clamp(1.15rem,2.5vw,1.55rem); font-weight:600; line-height:1.35; color:#fff; position:relative; z-index:1; }
+.cq blockquote em { color:var(--orange); font-style:normal; }
+.tl { list-style:none; display:flex; flex-direction:column; gap:.6rem; margin-top:1.5rem; }
+.tl li { display:flex; align-items:flex-start; gap:.7rem; font-size:.91rem; color:var(--text-mid); line-height:1.55; padding:.7rem 1rem; background:var(--bg); border-radius:8px; border-left:3px solid var(--border); transition:border-color .2s; }
+.tl li:hover { border-left-color:var(--orange); }
+
+/* ── EMPATÍA ── */
+#empatia { background:var(--bg); }
+.eg { display:grid; grid-template-columns:repeat(auto-fit,minmax(255px,1fr)); gap:1.2rem; margin-top:2.75rem; }
+.ec { background:#fff; border:1px solid var(--border); border-radius:var(--rl); padding:1.85rem; position:relative; overflow:hidden; transition:box-shadow .2s,transform .2s; }
+.ec:hover { box-shadow:0 8px 32px rgba(11,31,58,.08); transform:translateY(-2px); }
+.ec::after { content:attr(data-n); position:absolute; bottom:-.5rem; right:1rem; font-family:var(--ff-display); font-size:5rem; font-weight:800; color:var(--blue-muted); line-height:1; pointer-events:none; }
+.ci { width:38px; height:38px; border-radius:10px; background:var(--orange-dim); display:flex; align-items:center; justify-content:center; margin-bottom:1.1rem; }
+.ci svg { width:17px; height:17px; stroke:var(--orange); fill:none; stroke-width:1.8; stroke-linecap:round; }
+.ec h3 { font-size:1rem; margin-bottom:.5rem; }
+.ec p { font-size:.88rem; line-height:1.65; position:relative; z-index:1; }
+.eb { margin-top:2rem; background:var(--navy); border-radius:var(--rl); padding:2.25rem 2.75rem; display:flex; align-items:center; gap:1.75rem; }
+.ebl { width:4px; height:55px; background:var(--orange); border-radius:2px; flex-shrink:0; }
+.eb p { font-family:var(--ff-display); font-size:clamp(1.05rem,2vw,1.25rem); font-weight:500; line-height:1.5; color:rgba(255,255,255,.85); margin:0; }
+
+/* ── PROCESO ── */
+#proceso { background:#fff; }
+.prlo { display:grid; grid-template-columns:1fr 1fr; gap:clamp(3rem,5vw,5rem); align-items:start; }
+.pps { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:var(--rl); overflow:hidden; }
+.pp { background:var(--bg-card); padding:1.65rem 1.5rem; }
+.pp .pn { font-family:var(--ff-display); font-size:.68rem; font-weight:700; letter-spacing:.1em; color:var(--orange); margin-bottom:.85rem; display:block; text-transform:uppercase; }
+.pp h3 { font-size:.98rem; margin-bottom:.35rem; }
+.pp p { font-size:.84rem; line-height:1.55; }
+.specs { margin-top:2.5rem; }
+.sr { display:flex; justify-content:space-between; align-items:center; padding:.85rem 0; border-bottom:1px solid var(--border); }
+.sr:last-child { border-bottom:none; }
+.sr dt { font-size:.78rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+.sr dd { font-family:var(--ff-display); font-size:.98rem; font-weight:700; color:var(--text); }
+
+/* ── CÓMO FUNCIONA ── */
+#cf { background:var(--bg); }
+.timeline { display:flex; flex-direction:column; margin-top:2.75rem; position:relative; }
+.timeline::before { content:''; position:absolute; left:23px; top:48px; bottom:48px; width:1px; background:var(--border); }
+.ti { display:grid; grid-template-columns:48px 1fr; gap:1.5rem; padding:1.75rem 0; align-items:start; }
+.ti + .ti { border-top:1px solid var(--border); }
+.tnum { width:48px; height:48px; border-radius:12px; background:#fff; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; position:relative; z-index:1; transition:background .2s,border-color .2s; }
+.ti:hover .tnum { background:var(--orange); border-color:var(--orange); }
+.tnum span { font-family:var(--ff-display); font-size:.93rem; font-weight:700; color:var(--text-mid); transition:color .2s; }
+.ti:hover .tnum span { color:#fff; }
+.tb { padding-top:.55rem; }
+.tb h3 { margin-bottom:.4rem; }
+.tb p { font-size:.91rem; line-height:1.65; }
+.ttag { display:inline-block; margin-top:.7rem; font-size:.71rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--orange); background:var(--orange-soft); padding:.22rem .65rem; border-radius:999px; }
+
+/* ── PARA QUIÉN ── */
+#pq { background:#fff; }
+.pqg { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2.75rem; }
+.pqc { border-radius:var(--rl); padding:2.25rem; }
+.pqc.si { background:var(--navy); }
+.pqc.no { background:var(--bg); border:1px solid var(--border); }
+.pqh { display:flex; align-items:center; gap:.7rem; margin-bottom:1.6rem; }
+.pqb { width:26px; height:26px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:.85rem; font-weight:700; flex-shrink:0; }
+.pqb.si { background:var(--orange); color:#fff; }
+.pqb.no { background:var(--border); color:var(--text-muted); }
+.pqh h3 { font-size:.97rem; }
+.pqc.si .pqh h3 { color:#fff; }
+.pql { list-style:none; display:flex; flex-direction:column; gap:.7rem; }
+.pql li { display:flex; align-items:flex-start; gap:.6rem; font-size:.88rem; line-height:1.5; }
+.pqc.si .pql li { color:rgba(255,255,255,.75); }
+.pqc.no .pql li { color:var(--text-mid); }
+.pql li::before { flex-shrink:0; font-weight:700; font-size:.82rem; margin-top:.12em; }
+.pqc.si .pql li::before { content:'✓'; color:var(--orange); }
+.pqc.no .pql li::before { content:'×'; color:var(--text-muted); }
+
+/* ── RESULTADOS ── */
+#res { background:var(--bg); }
+.rg2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(275px,1fr)); gap:1.2rem; margin-top:2.75rem; }
+.rc { background:#fff; border:1px solid var(--border); border-radius:var(--rl); padding:1.85rem; transition:box-shadow .2s,transform .2s; }
+.rc:hover { box-shadow:0 6px 28px rgba(11,31,58,.07); transform:translateY(-2px); }
+.rn { font-family:var(--ff-display); font-size:1.75rem; font-weight:800; color:var(--orange); line-height:1; margin-bottom:.9rem; }
+.rc h3 { font-size:.97rem; margin-bottom:.45rem; }
+.rc p { font-size:.87rem; line-height:1.65; }
+.rdis { margin-top:2rem; padding:1.5rem 2rem; border:1px dashed var(--border); border-radius:var(--r); display:flex; gap:.9rem; align-items:flex-start; }
+.rdis-ico { font-family:var(--ff-display); font-size:1.1rem; font-weight:700; color:var(--orange); flex-shrink:0; margin-top:.1rem; }
+.rdis p { font-size:.84rem; color:var(--text-muted); line-height:1.65; margin:0; }
+
+/* ── SOBRE MÍ ── */
+#sm { background:#fff; }
+.sml { display:grid; grid-template-columns:.52fr 1fr; gap:clamp(3rem,6vw,5.5rem); align-items:start; }
+.smp { position:relative; }
+.smph { aspect-ratio:4/5; background:linear-gradient(135deg,var(--navy) 0%,var(--navy-mid) 100%); border-radius:var(--rl); overflow:hidden; display:flex; align-items:center; justify-content:center; position:relative; }
+.smph::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px); background-size:32px 32px; }
+.smi { font-family:var(--ff-display); font-size:4.5rem; font-weight:800; color:rgba(255,255,255,.15); position:relative; z-index:1; letter-spacing:-.04em; }
+.smbadge { position:absolute; bottom:-1rem; right:-1rem; background:var(--orange); color:#fff; border:3px solid #fff; border-radius:12px; padding:.7rem .95rem; font-family:var(--ff-display); font-size:.73rem; font-weight:700; letter-spacing:.04em; text-align:center; line-height:1.3; box-shadow:0 4px 16px rgba(232,93,26,.3); }
+.smtags { display:flex; flex-wrap:wrap; gap:.45rem; margin-top:2.5rem; }
+.smtag { display:inline-block; padding:.32rem .82rem; background:var(--bg); border:1px solid var(--border); border-radius:999px; font-size:.76rem; font-weight:600; color:var(--text-mid); letter-spacing:.04em; }
+.smt h2 { margin-bottom:1.4rem; }
+.smt p + p { margin-top:1rem; }
+.smv { margin-top:2.5rem; display:flex; flex-direction:column; gap:.65rem; }
+.smvi { display:flex; align-items:flex-start; gap:.7rem; font-size:.91rem; color:var(--text-mid); line-height:1.5; padding:.7rem 1rem; background:var(--bg); border-radius:8px; border-left:3px solid var(--orange); }
+
+/* ── TESTIMONIOS ── */
+#test { background:var(--navy); position:relative; overflow:hidden; }
+#test::before { content:''; position:absolute; top:-20%; right:-15%; width:55%; height:140%; background:radial-gradient(ellipse,rgba(232,93,26,.1) 0%,transparent 60%); pointer-events:none; }
+.testg { display:grid; grid-template-columns:repeat(auto-fit,minmax(295px,1fr)); gap:1.2rem; margin-top:2.75rem; }
+.testc { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:var(--rl); padding:2.25rem 2rem; display:flex; flex-direction:column; gap:1.4rem; transition:background .2s,border-color .2s; }
+.testc:hover { background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.15); }
+.tststars { display:flex; gap:3px; }
+.sts { width:13px; height:13px; background:var(--orange); clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
+.tq { font-family:var(--ff-display); font-size:clamp(.98rem,2vw,1.12rem); font-weight:400; line-height:1.55; color:rgba(255,255,255,.88); flex:1; }
+.tq::before { content:'"'; display:block; font-size:3rem; font-weight:800; color:var(--orange); line-height:.7; margin-bottom:.5rem; }
+.ta { padding-top:1.2rem; border-top:1px solid rgba(255,255,255,.08); }
+.ta strong { display:block; font-size:.86rem; font-weight:600; color:rgba(255,255,255,.9); }
+.ta span { font-size:.74rem; color:rgba(255,255,255,.4); letter-spacing:.03em; }
+.tnote { margin-top:2rem; text-align:center; font-size:.73rem; color:rgba(255,255,255,.3); font-style:italic; }
+
+/* ── FAQ ── */
+#faq { background:#fff; }
+.faqw { margin-top:2.75rem; border:1px solid var(--border); border-radius:var(--rl); overflow:hidden; }
+.faqitem { border-bottom:1px solid var(--border); }
+.faqitem:last-child { border-bottom:none; }
+.faqbtn { width:100%; text-align:left; background:none; border:none; cursor:pointer; padding:1.55rem 2rem; display:flex; justify-content:space-between; align-items:center; gap:1rem; font-family:var(--ff-display); font-size:clamp(.93rem,1.8vw,1.08rem); font-weight:600; color:var(--text); transition:background .2s; }
+.faqbtn:hover { background:var(--bg); }
+.faqplus { width:27px; height:27px; border-radius:8px; background:var(--bg); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:1.1rem; line-height:1; color:var(--text-muted); transition:background .2s,color .2s,transform .3s; }
+.faqitem.open .faqplus { background:var(--orange); color:#fff; border-color:var(--orange); transform:rotate(45deg); }
+.faqa { max-height:0; overflow:hidden; transition:max-height .4s ease; }
+.faqitem.open .faqa { max-height:400px; }
+.faqai { padding:0 2rem 1.65rem; }
+.faqai p { font-size:.93rem; line-height:1.72; }
+
+/* ── CTA FINAL ── */
+#ctaf { background:var(--navy); padding:clamp(5rem,10vw,8rem) 0; text-align:center; position:relative; overflow:hidden; }
+#ctaf::before { content:''; position:absolute; bottom:-30%; left:50%; transform:translateX(-50%); width:80%; height:80%; background:radial-gradient(ellipse,rgba(232,93,26,.15) 0%,transparent 65%); pointer-events:none; }
+#ctaf::after { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px); background-size:48px 48px; pointer-events:none; }
+.ctai { position:relative; z-index:1; }
+#ctaf h2 { color:#fff; margin-bottom:1.25rem; font-size:clamp(2.2rem,5vw,4rem); }
+#ctaf h2 em { color:var(--orange); font-style:normal; }
+#ctaf p { color:rgba(255,255,255,.65); max-width:515px; margin:0 auto 2.5rem; font-size:1.03rem; }
+.ctabtns { display:flex; align-items:center; justify-content:center; gap:1rem; flex-wrap:wrap; }
+.ctafn { margin-top:2.25rem; font-size:.8rem; color:rgba(255,255,255,.35); }
+.ctafn a { color:rgba(255,255,255,.55); text-decoration:none; transition:color .2s; }
+.ctafn a:hover { color:rgba(255,255,255,.85); }
+
+/* ── FOOTER ── */
+footer { background:#060F1E; padding:2rem 0; }
+.fi2 { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+.flogo { font-family:var(--ff-display); font-size:.88rem; color:rgba(255,255,255,.4); }
+.flogo span { color:var(--orange); }
+.flinks { list-style:none; display:flex; gap:1.5rem; }
+.flinks a { font-size:.76rem; color:rgba(255,255,255,.3); text-decoration:none; transition:color .2s; }
+.flinks a:hover { color:rgba(255,255,255,.65); }
+footer small { font-size:.72rem; color:rgba(255,255,255,.25); }
+
+/* ── RESPONSIVE ── */
+@media(max-width:860px){
+  .h-inner{grid-template-columns:1fr}
+  .h-card{display:none}
+  .pl{grid-template-columns:1fr}
+  .prlo{grid-template-columns:1fr}
+  .pqg{grid-template-columns:1fr}
+  .sml{grid-template-columns:1fr}
+  .smph{aspect-ratio:3/2}
+}
+@media(max-width:480px){
+  .rg{grid-template-columns:1fr}
+  .h-ctas{flex-direction:column;align-items:flex-start}
+  .ctabtns{flex-direction:column;align-items:center}
+  .eb{flex-direction:column;gap:1rem}
+  .ebl{width:48px;height:4px}
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#hero" class="nlogo">Tomás Ithuralde<span>.</span></a>
+  <a href="https://calendly.com/tomas-ithuralde-hugolevy/consulting" target="_blank" class="btn btn-p" style="padding:.65rem 1.2rem;font-size:.78rem;">
+    Agendá una llamada <span class="arr"></span>
+  </a>
+</nav>
+
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap h-inner">
+    <div>
+      <div class="fi"><span class="chip">Proceso de Reordenamiento Profesional</span></div>
+      <h1 class="h-h1 fi d1">
+        Tu carrera<br>
+        <span class="l2">no está mal.</span>
+        <span class="l3">Pero algo no cierra.</span>
+      </h1>
+      <p class="h-sub fi d2">
+        Trabajo con profesionales que tienen todo en orden por fuera — buen trabajo, buen historial — pero por dentro sienten que algo no encaja. Si estás en ese lugar, este proceso es para vos.
+      </p>
+      <div class="h-ctas fi d3">
+        <a href="https://calendly.com/tomas-ithuralde-hugolevy/consulting" target="_blank" class="btn btn-p">Agendá tu llamada gratuita <span class="arr"></span></a>
+        <a href="#proceso" class="btn btn-g">¿Cómo funciona?</a>
+      </div>
+      <div class="h-stats fi d4">
+        <div class="stat"><div class="n">6–8<span>sem</span></div><small>duración del proceso</small></div>
+        <div class="stat"><div class="n">1<span>a</span>1</div><small>acompañamiento directo</small></div>
+        <div class="stat"><div class="n">1</div><small>decisión concreta al final</small></div>
+      </div>
+    </div>
+    <div class="h-card fi d3">
+      <div class="h-step"><div class="sdot"><span>01</span></div><p>Entendés qué te está pasando realmente</p></div>
+      <div class="h-step"><div class="sdot"><span>02</span></div><p>Ordenás tu situación profesional</p></div>
+      <div class="h-step"><div class="sdot"><span>03</span></div><p>Tomás una decisión concreta sobre tu próximo paso</p></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- RECONOCIMIENTO -->
+<section id="reco">
+  <div class="wrap">
+    <div class="fi"><span class="chip" style="background:rgba(232,93,26,.12);border-color:rgba(232,93,26,.25);">Si llegaste hasta acá</span></div>
+    <h2 class="fi d1 wh">Probablemente reconocés<br><em>algo de esto</em></h2>
+    <div class="rg">
+      <div class="ri fi d1"><div class="ri-ico"><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><p>Tenés un buen trabajo — o al menos uno estable — pero los domingos a la noche sentís que algo falta.</p></div>
+      <div class="ri fi d2"><div class="ri-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg></div><p>Sabés lo que no querés. No sabés todavía con claridad qué querés en cambio.</p></div>
+      <div class="ri fi d3"><div class="ri-ico"><svg viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></div><p>Diste vueltas el tema muchas veces en tu cabeza, pero siempre volvés al mismo punto.</p></div>
+      <div class="ri fi d1"><div class="ri-ico"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><p>Sentís que tenés mucho para dar, pero no encontrás el lugar o el formato que te represente.</p></div>
+      <div class="ri fi d2"><div class="ri-ico"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><p>No es que estés "mal" — es que te falta claridad. Y eso, con el tiempo, agota.</p></div>
+      <div class="ri fi d3"><div class="ri-ico"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><p>Hablaste con amigos, leíste libros, escuchaste podcasts. Nada terminó de hacer clic.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PROBLEMA -->
+<section id="problema">
+  <div class="wrap">
+    <div class="pl">
+      <div class="fi">
+        <span class="chip">El problema real</span>
+        <div class="cq"><blockquote>No es falta de información.<br>Es falta de <em>orden interno.</em></blockquote></div>
+        <p>Vivimos en una era con más recursos que nunca para la orientación profesional. Tests de personalidad, frameworks de propósito, talleres de reinvención. Y sin embargo, muchos profesionales siguen dando vueltas en círculos.</p>
+        <p style="margin-top:.9rem;">El problema no es que no tengas respuestas. Es que las preguntas no están bien formuladas. Y eso no se resuelve con más información.</p>
+      </div>
+      <div class="fi d2">
+        <span class="chip">Las tensiones típicas</span>
+        <p style="margin-bottom:1.2rem;">Lo que suele aparecer cuando hablo con alguien que está en este lugar:</p>
+        <ul class="tl">
+          <li>Quiere cambiar, pero le da miedo perder lo que construyó.</li>
+          <li>Siente que debería estar bien, entonces le cuesta validar su propio malestar.</li>
+          <li>No quiere ser impulsivo, entonces posterga indefinidamente.</li>
+          <li>Siente que si deja de moverse, algo se va a romper. Pero si sigue así, también.</li>
+          <li>Le cuesta diferenciar qué es cansancio, qué es contexto y qué es vocación.</li>
+          <li>Teme que sus expectativas sean "demasiado altas".</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- EMPATÍA -->
+<section id="empatia">
+  <div class="wrap">
+    <span class="chip fi">Qué te está pasando</span>
+    <h2 class="fi d1">No estás estancado.<br>Estás <span class="o">desorientado.</span><br>Hay una diferencia.</h2>
+    <div class="eg">
+      <div class="ec fi d1" data-n="1"><div class="ci"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>El malestar que no tiene nombre</h3><p>No es burnout clásico. No es crisis de los 40. Es una sensación difusa de que tu trabajo no te representa — aunque no tengas un motivo concreto para quejarte. Eso también es válido.</p></div>
+      <div class="ec fi d2" data-n="2"><div class="ci"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></div><h3>El circuito que no avanza</h3><p>Pensás. Analizás. Llegás a conclusiones. Y a los días, volvés a pensar lo mismo. No es que seas indeciso — es que no tenés una estructura que sostenga el proceso.</p></div>
+      <div class="ec fi d3" data-n="3"><div class="ci"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><h3>La exigencia hacia uno mismo</h3><p>Con el nivel de formación y experiencia que tenés, sentís que "ya deberías saber". Eso genera culpa y más bloqueo. La trampa clásica del profesional exitoso que no puede pedir ayuda.</p></div>
+      <div class="ec fi d1" data-n="4"><div class="ci"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>El miedo a la respuesta</h3><p>Una parte de vos sabe que si te hacés la pregunta en serio, la respuesta va a implicar movimiento. Y el movimiento da vértigo. Entonces preferís mantener el status quo un poco más.</p></div>
+    </div>
+    <div class="eb fi d2">
+      <div class="ebl"></div>
+      <p>"El trabajo no debería ser la fuente central de tu identidad — pero sí debería representarte. Cuando eso no pasa, algo se desalinea y la energía empieza a fugarse hacia todos lados."</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- PROCESO -->
+<section id="proceso">
+  <div class="wrap">
+    <div class="prlo">
+      <div class="fi">
+        <span class="chip">El proceso</span>
+        <h2>Proceso de Reordenamiento Profesional</h2>
+        <p style="margin-top:1.4rem;">No es coaching motivacional. No es terapia. No te voy a dar una lista de ejercicios para hacer solo.</p>
+        <p style="margin-top:.85rem;">Es un proceso estructurado, 1 a 1, donde trabajo con vos para que puedas entender qué está pasando, ordenarlo y tomar una decisión concreta. Sin humo, sin promesas vacías.</p>
+        <dl class="specs">
+          <div class="sr"><dt>Duración</dt><dd>6 a 8 semanas</dd></div>
+          <div class="sr"><dt>Formato</dt><dd>Sesiones 1 a 1 online</dd></div>
+          <div class="sr"><dt>Frecuencia</dt><dd>Semanal o quincenal</dd></div>
+          <div class="sr"><dt>Resultado</dt><dd>1 decisión concreta</dd></div>
+        </dl>
+        <div style="margin-top:2.25rem;">
+          <a href="https://calendly.com/tomas-ithuralde-hugolevy/consulting" target="_blank" class="btn btn-p">Quiero saber si esto es para mí <span class="arr"></span></a>
+        </div>
+      </div>
+      <div class="fi d2">
+        <div class="pps">
+          <div class="pp"><span class="pn">Fase 01</span><h3>Entender</h3><p>Qué está pasando realmente. No la historia que te contás — lo que hay debajo.</p></div>
+          <div class="pp"><span class="pn">Fase 02</span><h3>Ordenar</h3><p>Tu situación profesional, tus prioridades reales y lo que genuinamente importa.</p></div>
+          <div class="pp"><span class="pn">Fase 03</span><h3>Decidir</h3><p>Un próximo paso laboral concreto. Claro. Con el que puedas comprometerte.</p></div>
+          <div class="pp"><span class="pn">Fase 04</span><h3>Accionar</h3><p>Salís con un plan simple y real. No una visión. Una dirección.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CÓMO FUNCIONA -->
+<section id="cf">
+  <div class="wrap">
+    <span class="chip fi">Paso a paso</span>
+    <h2 class="fi d1">Cómo funciona<br>el proceso</h2>
+    <div class="timeline">
+      <div class="ti fi d1"><div class="tnum"><span>01</span></div><div class="tb"><h3>Llamada de diagnóstico inicial (gratuita)</h3><p>Antes de empezar, tenemos una conversación de 30 minutos para entender qué está pasando y si el proceso tiene sentido para vos. Sin compromiso, sin venta. Si no es el momento, te lo digo.</p><span class="ttag">30 min · sin costo</span></div></div>
+      <div class="ti fi d2"><div class="tnum"><span>02</span></div><div class="tb"><h3>Mapeo de la situación actual</h3><p>Las primeras sesiones son de escucha activa y diagnóstico profundo. Miramos juntos qué está pasando realmente: más allá de los síntomas, qué hay debajo. Qué te genera energía, qué te drena, cuáles son las tensiones reales.</p><span class="ttag">Semanas 1–2</span></div></div>
+      <div class="ti fi d3"><div class="tnum"><span>03</span></div><div class="tb"><h3>Ordenamiento y clarificación</h3><p>Con la información del mapeo, trabajamos para ordenar el panorama. Diferenciamos qué es ruido y qué es señal. Identificamos qué querés realmente versus qué sentís que "deberías" querer.</p><span class="ttag">Semanas 3–5</span></div></div>
+      <div class="ti fi d1"><div class="tnum"><span>04</span></div><div class="tb"><h3>Evaluación de opciones y decisión</h3><p>Con el mapa claro, empezamos a mirar opciones concretas. Focalizamos en 2 o 3 direcciones reales y las evaluamos en profundidad. Al final de esta etapa, tenés una decisión honesta y tuya.</p><span class="ttag">Semanas 5–7</span></div></div>
+      <div class="ti fi d2"><div class="tnum"><span>05</span></div><div class="tb"><h3>Plan de próximos pasos</h3><p>Cerramos con algo concreto: qué vas a hacer, cuándo, y cómo. No es un plan de vida — es el siguiente movimiento real. Salís con dirección clara y energía para moverse desde un lugar más sólido.</p><span class="ttag">Semana 8 · cierre</span></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- PARA QUIÉN -->
+<section id="pq">
+  <div class="wrap">
+    <span class="chip fi">Para quién es</span>
+    <h2 class="fi d1">Esto funciona cuando<br>estás en el lugar <span class="o">correcto</span></h2>
+    <div class="pqg">
+      <div class="pqc si fi d1">
+        <div class="pqh"><div class="pqb si">✓</div><h3>Este proceso es para vos si…</h3></div>
+        <ul class="pql">
+          <li>Sos profesional con experiencia y sentís que tu trabajo actual no te representa.</li>
+          <li>Estás confundido/a sobre tu próximo paso y necesitás claridad, no motivación.</li>
+          <li>Tenés ganas de tomar una decisión, pero no querés apurarte ni equivocarte.</li>
+          <li>Estás dispuesto/a a mirarte con honestidad, sin filtros.</li>
+          <li>Valorás el trabajo profundo más que las soluciones rápidas.</li>
+          <li>Querés un acompañamiento real, no una herramienta de autoayuda más.</li>
+        </ul>
+      </div>
+      <div class="pqc no fi d2">
+        <div class="pqh"><div class="pqb no">×</div><h3>Probablemente no es para vos si…</h3></div>
+        <ul class="pql">
+          <li>Buscás que alguien te diga qué tenés que hacer sin necesitar entenderte.</li>
+          <li>Esperás resultados en una o dos sesiones.</li>
+          <li>Estás atravesando una crisis aguda que requiere soporte terapéutico intensivo.</li>
+          <li>Querés herramientas genéricas de productividad o motivación.</li>
+          <li>No estás dispuesto/a a cuestionar nada de lo que ya pensás.</li>
+          <li>Buscás validación, no honestidad.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- RESULTADOS -->
+<section id="res">
+  <div class="wrap">
+    <span class="chip fi">Qué podés esperar</span>
+    <h2 class="fi d1">No prometo "encontrar tu propósito".<br>Prometo <span class="o">otra cosa.</span></h2>
+    <div class="rg2">
+      <div class="rc fi d1"><div class="rn">01</div><h3>Claridad sobre lo que está pasando</h3><p>Entendés qué te está generando el malestar, más allá de los síntomas de superficie. Eso solo ya vale el proceso.</p></div>
+      <div class="rc fi d2"><div class="rn">02</div><h3>Un mapa de tu situación real</h3><p>No un diagnóstico de consultora. Un mapa tuyo, construido con vos, que te permite verte desde otro lugar.</p></div>
+      <div class="rc fi d3"><div class="rn">03</div><h3>Una decisión concreta</h3><p>No vaga. No una lista de opciones. Una dirección elegida conscientemente, con todo lo que eso implica.</p></div>
+      <div class="rc fi d1"><div class="rn">04</div><h3>Energía recuperada</h3><p>La confusión crónica drena. Cuando ordenás, se libera energía. Casi todos los procesos terminan con una sensación de alivio genuino.</p></div>
+      <div class="rc fi d2"><div class="rn">05</div><h3>Capacidad de decidir solo</h3><p>El objetivo no es que dependas de mí. Es que salgas con mejores herramientas internas para navegarte en el futuro.</p></div>
+      <div class="rc fi d3"><div class="rn">06</div><h3>Un plan accionable</h3><p>No un moodboard de vida ideal. Un conjunto de pasos concretos y posibles para los próximos meses.</p></div>
+    </div>
+    <div class="rdis fi d2"><div class="rdis-ico">!</div><p><strong style="color:var(--text-mid)">Una nota honesta:</strong> No garantizo resultados específicos. Lo que garantizo es un proceso serio, honesto y dedicado. Si llegás buscando una fórmula mágica, este no es el lugar.</p></div>
+  </div>
+</section>
+
+
+<!-- SOBRE MÍ -->
+<section id="sm">
+  <div class="wrap">
+    <div class="sml">
+      <div class="fi">
+        <div class="smp">
+          <div class="smph"><span class="smi">TI</span></div>
+          <div class="smbadge">Psicólogo<br>& Coach</div>
+        </div>
+        <div class="smtags">
+          <span class="smtag">Psicólogo</span>
+          <span class="smtag">Coach certificado</span>
+          <span class="smtag">Hugo Levy</span>
+          <span class="smtag">Buenos Aires</span>
+        </div>
+      </div>
+      <div class="smt fi d2">
+        <span class="chip">Sobre mí</span>
+        <h2>Soy Tomás Ithuralde</h2>
+        <p>Soy psicólogo y coach. Trabajo con profesionales que están bien por fuera pero sienten que algo no cierra. No vengo a motivarlos — vengo a ayudarlos a entenderse.</p>
+        <p>Mi formación en psicología me da herramientas para ir más allá de la superficie: entender qué hay detrás de los bloqueos, las decisiones postergadas y las confusiones que parecen no tener solución. Mi trabajo en coaching me da el marco para orientar eso hacia la acción.</p>
+        <p>No trabajo con muchas personas a la vez. Prefiero procesos profundos con pocas personas que procesos superficiales con muchas. Si trabajo con vos, tenés mi atención completa.</p>
+        <p>Formo parte del equipo de Hugo Levy, consultora especializada en desarrollo de personas y organizaciones.</p>
+        <div class="smv">
+          <div class="smvi">Creo en el trabajo honesto, sin promesas infladas.</div>
+          <div class="smvi">No creo en el propósito como destino — creo en la dirección como brújula.</div>
+          <div class="smvi">La claridad no se encuentra. Se construye.</div>
+          <div class="smvi">Una buena pregunta vale más que diez respuestas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- TESTIMONIOS -->
+<section id="test">
+  <div class="wrap" style="position:relative;z-index:1;">
+    <span class="chip fi" style="background:rgba(232,93,26,.15);border-color:rgba(232,93,26,.3);">Lo que dicen</span>
+    <h2 class="fi d1 wh">Experiencias reales de<br>profesionales como vos</h2>
+    <div class="testg">
+      <div class="testc fi d1"><div class="tststars"><div class="sts"></div><div class="sts"></div><div class="sts"></div><div class="sts"></div><div class="sts"></div></div><div class="tq">Llegué convencida de que necesitaba cambiar de trabajo. Salí con otra pregunta: cambiar para qué. Eso solo reorganizó todo lo demás.</div><div class="ta"><strong>Valentina R.</strong><span>Gerente de Comunicaciones · Buenos Aires</span></div></div>
+      <div class="testc fi d2"><div class="tststars"><div class="sts"></div><div class="sts"></div><div class="sts"></div><div class="sts"></div><div class="sts"></div></div><div class="tq">Lo que más valoré fue que nunca me dijo qué hacer. Me hizo las preguntas que yo no me estaba animando a hacerme. Al final, la decisión fue completamente mía — y eso importa.</div><div class="ta"><strong>Ignacio F.</strong><span>Abogado corporativo · 38 años</span></div></div>
+      <div class="testc fi d3"><div class="tststars"><div class="sts"></div><div class="sts"></div><div class="sts"></div><div class="sts"></div><div class="sts"></div></div><div class="tq">Estaba en un loop de análisis que duraba meses. El proceso me ayudó a salir de la cabeza y entender qué me estaba bloqueando realmente. En 6 semanas avancé más que en dos años.</div><div class="ta"><strong>Carolina M.</strong><span>Product Manager · Montevideo</span></div></div>
+    </div>
+    <p class="tnote fi d2">* Los testimonios reflejan experiencias reales. Los nombres y datos identificatorios fueron modificados para preservar la privacidad.</p>
+  </div>
+</section>
+
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrapsm">
+    <span class="chip fi">Preguntas frecuentes</span>
+    <h2 class="fi d1">Lo que suele<br>preguntarse la gente</h2>
+    <div class="faqw fi d2">
+      <div class="faqitem"><button class="faqbtn" onclick="fq(this)">¿Cuánto cuesta el proceso?<span class="faqplus">+</span></button><div class="faqa"><div class="faqai"><p>El proceso tiene un costo fijo que acordamos en la llamada inicial. Prefiero conversarlo en persona porque el valor depende de lo que necesitás y del formato que tenga más sentido para vos. La llamada de diagnóstico es gratuita y sin compromiso.</p></div></div></div>
+      <div class="faqitem"><button class="faqbtn" onclick="fq(this)">¿Esto es terapia o coaching?<span class="faqplus">+</span></button><div class="faqa"><div class="faqai"><p>Es una combinación de ambos enfoques, orientada a un objetivo específico: tu situación profesional. Mi formación en psicología me permite trabajar con profundidad real — no solo en el "qué querés hacer" sino en el "por qué no lo estás haciendo". El foco siempre es la acción concreta.</p></div></div></div>
+      <div class="faqitem"><button class="faqbtn" onclick="fq(this)">¿Qué pasa si al final no tomé ninguna decisión?<span class="faqplus">+</span></button><div class="faqa"><div class="faqai"><p>Primero, sería honesto con vos sobre qué estuvo pasando. A veces "no decidir" también es información valiosa. Mi trabajo es acompañarte con seriedad — no garantizarte un resultado. Lo que sí garantizo es que si llegamos a ese punto, vamos a tener mucha más claridad sobre por qué no estás pudiendo decidir.</p></div></div></div>
+      <div class="faqitem"><button class="faqbtn" onclick="fq(this)">¿Funciona si no sé qué quiero cambiar, solo sé que algo no está bien?<span class="faqplus">+</span></button><div class="faqa"><div class="faqai"><p>Sí, y de hecho ese es el perfil más común con el que trabajo. No hace falta saber qué querés — hace falta estar dispuesto a mirarlo en serio. El proceso empieza exactamente desde ese lugar de confusión.</p></div></div></div>
+      <div class="faqitem"><button class="faqbtn" onclick="fq(this)">¿Puedo hacer el proceso si tengo un trabajo y poco tiempo?<span class="faqplus">+</span></button><div class="faqa"><div class="faqai"><p>Sí. El proceso está pensado para profesionales activos. Las sesiones son de una hora, en formato online. Lo que sí necesitás es disposición mental real — que cuando estés en la sesión, estés ahí de verdad.</p></div></div></div>
+      <div class="faqitem"><button class="faqbtn" onclick="fq(this)">¿La llamada inicial es realmente sin compromiso?<span class="faqplus">+</span></button><div class="faqa"><div class="faqai"><p>Sí. Es una conversación para entender si tiene sentido trabajar juntos. Si el proceso no es lo que necesitás en este momento, te lo digo. No vendo a cualquiera porque me interesa que funcione.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CTA FINAL -->
+<section id="ctaf">
+  <div class="wrap ctai">
+    <h2 class="fi">Si llegaste hasta acá,<br><em>algo resonó.</em></h2>
+    <p class="fi d1">No hace falta estar seguro. Solo hace falta tener ganas de mirarlo en serio. La llamada es gratuita, dura 30 minutos y no compromete nada.</p>
+    <div class="ctabtns fi d2">
+      <a href="https://calendly.com/tomas-ithuralde-hugolevy/consulting" target="_blank" class="btn btn-w">Agendá tu llamada gratuita <span class="arr" style="background:var(--orange)"></span></a>
+      <a href="mailto:tomas.ithuralde@hugolevy.com" class="btn btn-ow">Escribime directamente</a>
+    </div>
+    <p class="ctafn fi d3">O escribime a <a href="mailto:tomas.ithuralde@hugolevy.com">tomas.ithuralde@hugolevy.com</a> si preferís arrancar por mail.</p>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap fi2">
+    <span class="flogo">Tomás Ithuralde<span>.</span></span>
+    <ul class="flinks">
+      <li><a href="mailto:tomas.ithuralde@hugolevy.com">Contacto</a></li>
+      <li><a href="https://calendly.com/tomas-ithuralde-hugolevy/consulting" target="_blank">Agendar llamada</a></li>
+    </ul>
+    <small>© 2025 · Hugo Levy · Buenos Aires</small>
+  </div>
+</footer>
+
+<script>
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('sc', scrollY > 50), {passive:true});
+
+  const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('v'); }), {threshold:.08, rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.fi').forEach(el => obs.observe(el));
+
+  function fq(btn) {
+    const item = btn.closest('.faqitem');
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.faqitem.open').forEach(i => i.classList.remove('open'));
+    if (!open) item.classList.add('open');
+  }
+</script>
+</body>
+</html>
